@@ -1,4 +1,4 @@
-const errorsHandlers = (err, req, res, next) => {
+const errorsHandler = (err, req, res, next) => {
   const resObj = {
     status: "fail",
     message: err.message,
@@ -11,4 +11,4 @@ const errorsHandlers = (err, req, res, next) => {
 };
 
 
-module.exports = errorsHandlers;
+module.exports = errorsHandler;
