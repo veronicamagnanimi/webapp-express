@@ -7,6 +7,9 @@ const errorsHandler = require("./middleware/errorsHandler");
 //rotte
 app.use("/movies", moviesRouter);
 
+//asset statici
+app.use(express.static("public"));
+
 //middleware
 app.use(errorsHandler);
 
