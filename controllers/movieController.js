@@ -2,9 +2,18 @@ const connection = require("../data/database");
 
 //index
 const index = (req, res, next) => {
-  const sql = "SELECT * FROM `movies`";
+  const filters = req.query;
+  console.log(filters);
 
-  connection.query(sql, (err, movies) => {
+  const sql = "SELECT * FROM `movies`";
+  const params = [];
+
+  if (filters.search) {
+    sql += `WHERE title LIKE ?`;
+    params.push(`%${filters.search}%`);
+  }
+
+  connection.query(sql, params, (err, movies) => {
     if (err) {
       return next(new Error(err.message));
     }
@@ -18,7 +27,11 @@ const index = (req, res, next) => {
 //show
 const show = (req, res, next) => {
   const id = req.params.id;
-  const sql = "SELECT * FROM `movies` WHERE id=?";
+  const sql = `SELECT movies.*, CAST(AVG(reviews.vote) as FLOAT) AS vote_avg
+  FROM movies
+  LEFT JOIN reviews
+  ON reviews.movie_id = movies.id
+  WHERE movies.id = ?`;
   const sqlReviews = `
   SELECT reviews.*
   FROM reviews

@@ -7,8 +7,8 @@ const errorsHandler = (err, req, res, next) => {
   if (process.env.ENVIRONMENT === "development") {
     resObj.detail = err.stack;
   }
-  return resObj.status(500).json(resObj);
-};
 
+  return res.status(500).json(resObj);
+};
 
 module.exports = errorsHandler;
