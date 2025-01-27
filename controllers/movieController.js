@@ -38,20 +38,20 @@ const index = (req, res, next) => {
 
 //show
 const show = (req, res, next) => {
-  const id = req.params.id;
+  const slug = req.params.slug;
   const sql = `SELECT movies.*, CAST(AVG(reviews.vote) as FLOAT) AS vote_avg
   FROM movies
   LEFT JOIN reviews
   ON reviews.movie_id = movies.id
-  WHERE movies.id = ?`;
+  WHERE movies.slug = ?`;
   const sqlReviews = `
   SELECT reviews.*
   FROM reviews
   JOIN movies
   ON movies.id = reviews.movie_id
-  WHERE movies.id = ?`;
+  WHERE movies.slug = ?`;
 
-  connection.query(sql, [id], (err, results) => {
+  connection.query(sql, [slug], (err, results) => {
     if (err) {
       return next(new Error(err.message));
     }
