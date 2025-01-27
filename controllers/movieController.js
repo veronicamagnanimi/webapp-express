@@ -5,12 +5,24 @@ const index = (req, res, next) => {
   const filters = req.query;
   console.log(filters);
 
-  const sql = "SELECT * FROM `movies`";
+  let sql = "SELECT * FROM `movies`";
   const params = [];
+  const conditions = [];
 
   if (filters.search) {
     sql += `WHERE title LIKE ?`;
     params.push(`%${filters.search}%`);
+  }
+
+  for (const key in req.query) {
+    if (key !== "search") {
+      conditions.push(`${key} = ?`);
+      params.push(req.query[key]);
+    }
+  }
+
+  if (conditions.length > 0) {
+    sql += ` WHERE ${conditions.join(" AND ")}`;
   }
 
   connection.query(sql, params, (err, movies) => {
