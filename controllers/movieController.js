@@ -63,7 +63,7 @@ const show = (req, res, next) => {
     }
 
     //query reviews
-    connection.query(sqlReviews, [id], (err, reviews) => {
+    connection.query(sqlReviews, [slug], (err, reviews) => {
       if (err) {
         return next(new Error(err.message));
       }
@@ -79,5 +79,61 @@ const show = (req, res, next) => {
   });
 };
 
+//create
+const createReview = (req, res, next) => {
+  const id = req.params.id;
+  const {name, vote, text} = req.body;
+  console.log("recensione", id)
+ 
 
-module.exports = { index, show };
+//validation 
+if(isNaN(vote) || vote < 0 || vote > 5) {
+  res.status(400).json({
+    status: "fail",
+    message: "Complete the review correctly"
+  })
+}  
+
+if(text && text.length > 0 && text.length < 5) {
+  res.status(400).json({
+    status: "fail",
+    message: "The text must be at least five characters long"
+  })
+}
+
+//error id
+  const movieSql = `SELECT * FROM movies WHERE id = ?`
+  connection.query(movieSql, [id], (err, results) => {
+    if(err) {
+      return next(new Error(err.message));
+    }
+    if(results.length === 0) {
+      return res.status(404).json({
+        status: "fail",
+        message: "Movie not found"
+      })
+    }
+  })
+
+  const sql = `INSERT INTO reviews(movie_id, name, vote, text)
+  VALUES(?, ?, ?, ?)`;
+  connection.query(sql, [id, name, vote, text], (err, results) => {
+    if(err) {
+      return next(new Error(err.message));
+    }
+    res.status(201).json({
+      status: "success",
+      message: "Review added successfully"
+    })
+
+  })
+}
+
+//store 
+// const store = (req, res, next) => {
+//   console.log("Save movie")
+// }
+
+
+
+module.exports = { index, show, createReview };

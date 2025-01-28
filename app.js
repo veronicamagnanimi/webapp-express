@@ -11,6 +11,9 @@ app.use(cors({
     origin: process.env.FRONTEND_URL
 }))
 
+//middleware json
+app.use(express.json());
+
 //rotte
 app.use("/movies", moviesRouter);
 
