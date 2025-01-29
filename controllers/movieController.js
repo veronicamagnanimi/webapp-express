@@ -130,10 +130,25 @@ if(text && text.length > 0 && text.length < 5) {
 }
 
 //store 
-// const store = (req, res, next) => {
-//   console.log("Save movie")
-// }
+const store = (req, res, next) => {
+  const imageName = req.file.fileName;
+  const {title, director, genre, release_year, abstract} = req.body;
+  const slug = slugify(title, {
+    lower: true, strict: true
+  });
+  const sql = `INSERT INTO movies (slug, title, director, genre, release_year, abstract, image 
+  VALUES (?, ?, ?, ?, ?, ?, ?)`;
+  connection.query (sql, [slug, title, director, genre, release_year, abstract, imageName], (err, results) => {
+    if (err)  {
+      return next(new Error(err.message));
+    }
+  })
+  return res.status(201).json({
+    status: "success",
+    message: "Ok"
+  })
+}
 
 
 
-module.exports = { index, show, createReview };
+module.exports = { index, show, createReview, store };
